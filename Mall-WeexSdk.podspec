@@ -1,7 +1,7 @@
 # coding: utf-8
 Pod::Spec.new do |s|
 
-  s.name         = "MallWeexSdk"
+  s.name         = "Mall-WeexSdk"
 
   s.version      = "0.19.0.0"
 
