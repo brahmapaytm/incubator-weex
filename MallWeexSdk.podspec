@@ -1,9 +1,9 @@
 # coding: utf-8
 Pod::Spec.new do |s|
 
-  s.name         = "WeexSDK"
+  s.name         = "MallWeexSdk"
 
-  s.version      = "0.18.0"
+  s.version      = "0.18.01"
 
   s.summary      = "WeexSDK Source ."
 
@@ -18,15 +18,11 @@ Pod::Spec.new do |s|
            Alibaba-INC copyright
     LICENSE
   }
-  s.authors      = { "cxfeng1"      => "cxfeng1@gmail.com",
-                     "boboning"     => "ningli928@163.com",
-                     "yangshengtao" => "yangshengtao1314@163.com",
-                     "kfeagle"      => "sunjjbobo@163.com",
-                     "acton393"     => "zhangxing610321@gmail.com"
+  s.authors      = { "brahmapaytm"      => "brammanand.soni@paytmmall.com"
                    }
   s.platform     = :ios
   s.ios.deployment_target = '8.0'
-  s.source =  { :path => '.' }
+  s.source =  { :git => 'https://github.com/brahmapaytm/incubator-weex.git', :tag => '0.18.01' }
   s.source_files = 'ios/sdk/WeexSDK/Sources/**/*.{h,m,mm,c}'
   s.resources = 'pre-build/native-bundle-main.js', 'ios/sdk/WeexSDK/Resources/wx_load_error@3x.png'
 
