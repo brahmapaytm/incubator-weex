@@ -522,7 +522,7 @@ do {\
         paragraphStyle.lineBreakMode = NSLineBreakByClipping;
     } else {
          // set default lineBreakMode
-        paragraphStyle.lineBreakMode = NSLineBreakByCharWrapping;
+        paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     }
     _truncationLine = NO;
     if (_textOverflow && [_textOverflow length] > 0) {
@@ -651,7 +651,7 @@ do {\
         textContainer.lineBreakMode = NSLineBreakByClipping;
     } else {
         // set default lineBreakMode
-        textContainer.lineBreakMode = NSLineBreakByCharWrapping;
+        textContainer.lineBreakMode = NSLineBreakByWordWrapping;
     }
     
     if (_textOverflow && [_textOverflow length] > 0) {
