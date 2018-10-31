@@ -71,17 +71,9 @@ On Android Platform , Weex code is executed in [weex_v8core](https://github.com/
 
      Add the following line to your Podfile:
    ```
-     pod 'WeexSDK'
+     pod 'Mall-WeexSdk'
    ```
     run `pod install`
-
-  - **[Carthage](https://github.com/carthage/carthage)**
-
-    Add the following line to your Cartfile:
-   ```
-     github "apache/incubator-weex"
-   ```
-   Run `carthage update`, and you should now have the latest version of   `WeexSDK` in your `Carthage` folder.
 
 ### Mobile Web
 
