@@ -27,8 +27,9 @@ Pod::Spec.new do |s|
   s.resources = 'pre-build/*.js','ios/sdk/WeexSDK/Resources/wx_load_error@3x.png'
 
   s.user_target_xcconfig  = { 'FRAMEWORK_SEARCH_PATHS' => "'$(PODS_ROOT)/Mall-WeexSdk'" }
+  s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
   s.requires_arc = true
-  s.prefix_header_file = 'ios/sdk/WeexSDK/Sources/Supporting Files/Mall-WeexSdk-prefix'
+  s.prefix_header_file = 'ios/sdk/WeexSDK/Sources/Supporting Files/WeexSDK-Prefix.pch'
 
 #  s.xcconfig = { "GCC_PREPROCESSOR_DEFINITIONS" => '$(inherited) DEBUG=1' }
 
