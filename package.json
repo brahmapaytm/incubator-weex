@@ -9,7 +9,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:apache/incubator-weex.git"
+    "url": "git@github.com:brahmapaytm/incubator-weex.git"
   },
   "homepage": "http://weex.apache.org/",
   "bugs": {
