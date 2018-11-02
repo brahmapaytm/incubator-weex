@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
 
   s.name         = "Mall-WeexSdk"
 
-  s.version      = "0.20.0.00"
+  s.version      = "0.18.0.00"
 
   s.summary      = "Mall WeexSDK Source ."
 
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
                    }
   s.platform     = :ios
   s.ios.deployment_target = '8.0'
-  s.source =  { :git => 'https://github.com/brahmapaytm/incubator-weex.git', :tag => '0.20.0.00' }
+  s.source =  { :git => 'https://github.com/brahmapaytm/incubator-weex.git', :tag => '0.18.0.00' }
   s.source_files = 'ios/sdk/WeexSDK/Sources/**/*.{h,m,mm,c,cpp}'
   s.resources = 'pre-build/*.js','ios/sdk/WeexSDK/Resources/wx_load_error@3x.png'
 
