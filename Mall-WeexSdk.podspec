@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
 
   s.name         = "Mall-WeexSdk"
 
-  s.version      = "0.19.0.01"
+  s.version      = "0.19.0.02"
 
   s.summary      = "Mall WeexSDK Source ."
 
@@ -22,13 +22,13 @@ Pod::Spec.new do |s|
                    }
   s.platform     = :ios
   s.ios.deployment_target = '8.0'
-  s.source =  { :git => 'https://github.com/brahmapaytm/incubator-weex.git', :tag => '0.19.0.01' }
+  s.source =  { :git => 'https://github.com/brahmapaytm/incubator-weex.git', :tag => '0.19.0.02' }
   s.source_files = 'ios/sdk/WeexSDK/Sources/**/*.{h,m,mm,c,cpp}'
   s.resources = 'pre-build/*.js','ios/sdk/WeexSDK/Resources/wx_load_error@3x.png'
 
   s.user_target_xcconfig  = { 'FRAMEWORK_SEARCH_PATHS' => "'$(PODS_ROOT)/Mall-WeexSdk'" }
   s.requires_arc = true
-  s.prefix_header_file = 'ios/sdk/WeexSDK/Sources/Supporting Files/WeexSDK-Prefix.pch'
+  s.prefix_header_file = 'ios/sdk/WeexSDK/Sources/Supporting Files/Mall-WeexSdk-prefix'
 
 #  s.xcconfig = { "GCC_PREPROCESSOR_DEFINITIONS" => '$(inherited) DEBUG=1' }
 
