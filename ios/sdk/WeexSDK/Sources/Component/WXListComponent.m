@@ -165,6 +165,12 @@
     _tableView.estimatedRowHeight = 0;
     _tableView.estimatedSectionFooterHeight = 0;
     _tableView.estimatedSectionHeaderHeight = 0;
+    
+    if ([[self.attributes objectForKey:@"disableBounce"] boolValue]) {
+        [self setOnScroll:^(UIScrollView *scrollView) {
+            scrollView.bounces = NO;
+        }];
+    }
 }
 
 - (void)viewWillUnload
