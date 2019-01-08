@@ -30,8 +30,6 @@
 #import "WXConvert.h"
 #import "WXMonitor.h"
 #import "WXAssert.h"
-#import "WXThreadSafeMutableDictionary.h"
-#import "WXThreadSafeMutableArray.h"
 #import "WXTransform.h"
 #import "WXRoundedRect.h"
 #import <pthread/pthread.h>
@@ -495,6 +493,11 @@ static BOOL bNeedRemoveEvents = YES;
     }
 }
 
+- (BOOL)_isAffineTypeAs:(NSString *)type
+{
+    return [WXCoreBridge isComponentAffineType:_type asType:type];
+}
+
 - (CALayer *)layer
 {
     return _layer;
@@ -514,7 +517,7 @@ static BOOL bNeedRemoveEvents = YES;
 {
 }
 
-- (BOOL)_isCaculatedFrameChanged:(CGRect)frame
+- (BOOL)_isCalculatedFrameChanged:(CGRect)frame
 {
     return !CGRectEqualToRect(frame, _calculatedFrame);
 }
