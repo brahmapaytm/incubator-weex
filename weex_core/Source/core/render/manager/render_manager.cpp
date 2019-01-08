@@ -16,21 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+#include "core/render/manager/render_manager.h"
 
+#include <chrono>
 #include <utility>
 #include <vector>
-#include "wson_parser.h"
-#include <base/LogDefines.h>
-#include <chrono>
 
-#include "base/ViewUtils.h"
+#include "base/log_defines.h"
+#include "base/time_utils.h"
+#include "core/common/view_utils.h"
 #include "core/css/constants_name.h"
-#include "base/TimeUtils.h"
 #include "core/layout/measure_func_adapter.h"
 #include "core/parser/dom_wson.h"
-#include "core/render/manager/render_manager.h"
 #include "core/render/node/render_object.h"
 #include "core/render/page/render_page.h"
+#include "wson/wson_parser.h"
 
 namespace WeexCore {
 

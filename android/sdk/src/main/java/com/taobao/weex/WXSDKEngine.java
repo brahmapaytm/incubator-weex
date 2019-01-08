@@ -22,9 +22,14 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import android.util.Log;
 import com.taobao.weex.adapter.IDrawableLoader;
 import com.taobao.weex.adapter.IWXHttpAdapter;
 import com.taobao.weex.adapter.IWXImgLoaderAdapter;
@@ -78,11 +83,13 @@ import com.taobao.weex.ui.component.WXSwitch;
 import com.taobao.weex.ui.component.WXText;
 import com.taobao.weex.ui.component.WXVideo;
 import com.taobao.weex.ui.component.WXWeb;
+import com.taobao.weex.ui.component.basic.WXBasicComponent;
 import com.taobao.weex.ui.component.list.HorizontalListComponent;
 import com.taobao.weex.ui.component.list.SimpleListComponent;
 import com.taobao.weex.ui.component.list.WXCell;
 import com.taobao.weex.ui.component.list.WXListComponent;
 import com.taobao.weex.ui.component.list.template.WXRecyclerTemplateList;
+import com.taobao.weex.ui.component.richtext.WXRichText;
 import com.taobao.weex.ui.config.AutoScanConfigRegister;
 import com.taobao.weex.ui.module.WXLocaleModule;
 import com.taobao.weex.ui.module.WXMetaModule;
@@ -93,6 +100,7 @@ import com.taobao.weex.utils.LogLevel;
 import com.taobao.weex.utils.WXExceptionUtils;
 import com.taobao.weex.utils.WXLogUtils;
 import com.taobao.weex.utils.WXSoInstallMgrSdk;
+import com.taobao.weex.utils.WXViewUtils;
 import com.taobao.weex.utils.batch.BatchOperationHelper;
 
 import java.io.Serializable;
@@ -239,6 +247,11 @@ public class WXSDKEngine implements Serializable {
       }
     });
     register();
+
+    //2ms,onepluse2 ,full screen adapter for mix2 ,v2ex link :https://www.v2ex.com/t/470543
+    if (null!=application && Build.VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN && "xiaomi".equalsIgnoreCase(Build.MANUFACTURER)){
+     WXViewUtils.isMiUiForceFsgNavBar = Settings.Global.getInt(application.getContentResolver(), "force_fsg_nav_bar", 0) != 0;
+    }
   }
 
   @Deprecated
@@ -329,6 +342,15 @@ public class WXSDKEngine implements Serializable {
               WXBasicComponentType.VLIST,
               WXBasicComponentType.RECYCLER,
               WXBasicComponentType.WATERFALL);
+
+      registerComponent(
+              new SimpleComponentHolder(
+                      WXRichText.class,
+                      new WXRichText.Creator()
+              ),
+              false,
+              WXBasicComponentType.RICHTEXT
+      );
 
       String simpleList = "simplelist";
       registerComponent(SimpleListComponent.class,false,simpleList);

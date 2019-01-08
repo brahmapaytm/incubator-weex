@@ -17,23 +17,24 @@
  * under the License.
  */
 #include "script_bridge_in_multi_process.h"
-#include <android/utils/params_utils.h>
-#include <base/make_copyable.h>
-#include <base/message_loop/message_loop.h>
-#include <base/thread/waitable_event.h>
-#include "IPC/IPCArguments.h"
-#include "IPC/IPCHandler.h"
-#include "IPC/IPCMessageJS.h"
-#include "IPC/IPCResult.h"
-#include "android/base/jni/android_jni.h"
-#include "android/base/log_utils.h"
+
+#include "android/utils/params_utils.h"
 #include "android/base/string/string_utils.h"
 #include "android/bridge/multi_process_and_so_initializer.h"
 #include "android/bridge/script/script_side_in_multi_process.h"
-#include "android/jsengine/multiprocess/WeexJSConnection.h"
-#include "android/utils/IPCStringResult.h"
+#include "android/multiprocess/weex_js_connection.h"
+#include "android/utils/ipc_string_result.h"
+#include "base/android/log_utils.h"
+#include "base/make_copyable.h"
+#include "base/message_loop/message_loop.h"
+#include "base/thread/waitable_event.h"
+#include "base/android/jni/android_jni.h"
 #include "core/bridge/script/core_side_in_script.h"
 #include "core/manager/weex_core_manager.h"
+#include "third_party/IPC/IPCArguments.h"                                         
+#include "third_party/IPC/IPCHandler.h"                                           
+#include "third_party/IPC/IPCMessageJS.h" 
+#include "third_party/IPC/IPCResult.h"
 
 namespace WeexCore {
 
@@ -906,6 +907,31 @@ std::unique_ptr<IPCResult> HandleDispatchMessage(IPCArguments *arguments) {
   return createInt32Result(static_cast<int32_t>(true));
 }
 
+std::unique_ptr<IPCResult> HandleDispatchMessageSync(IPCArguments *arguments) {
+  int i = getArumentAsCStrLen(arguments, 1);
+  weex::base::WaitableEvent event;
+  std::unique_ptr<WeexJSResult> result;
+  WeexCoreManager::Instance()->script_thread()->message_loop()->PostTask(
+      weex::base::MakeCopyable(
+          [clientId = std::unique_ptr<char[]>(getArumentAsCStr(arguments, 0)),
+           dataS = std::unique_ptr<char[]>(getArumentAsCStr(arguments, 1)),
+           vmId = std::unique_ptr<char[]>(getArumentAsCStr(arguments, 2)),
+           length = i, e = &event, r = &result]() {
+            *r = WeexCoreManager::Instance()
+                     ->script_bridge()
+                     ->core_side()
+                     ->DispatchMessageSync(clientId.get(), dataS.get(), length,
+                                           vmId.get());
+            e->Signal();
+          }));
+  event.Wait();
+  if (result->length > 0) {
+    return createByteArrayResult(result->data.get(), result->length);
+  } else {
+    return createVoidResult();
+  }
+}
+
 std::unique_ptr<IPCResult> OnReceivedResult(IPCArguments *arguments) {
   long callback_id = arguments->get<long>(0);
   std::unique_ptr<WeexJSResult> result;
@@ -931,6 +957,21 @@ std::unique_ptr<IPCResult> OnReceivedResult(IPCArguments *arguments) {
   return createInt32Result(static_cast<int32_t>(true));
 }
 
+std::unique_ptr<IPCResult> UpdateComponentData(IPCArguments *arguments) {
+    auto arg1 = std::unique_ptr<char[]>(getArumentAsCStr(arguments, 0));
+    auto arg2 = std::unique_ptr<char[]>(getArumentAsCStr(arguments, 1));
+    auto arg3 = std::unique_ptr<char[]>(getArumentAsCStr(arguments, 2));
+    WeexCoreManager::Instance()->script_thread()->message_loop()->PostTask(
+        weex::base::MakeCopyable(
+            [page_id = std::move(arg1), cid = std::move(arg2), json_data = std::move(arg3)]() {
+              WeexCoreManager::Instance()
+                  ->script_bridge()
+                  ->core_side()
+                  ->UpdateComponentData(page_id.get(), cid.get(), json_data.get());
+            }));
+    return createInt32Result(static_cast<int32_t>(true));
+}
+
 ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
   set_script_side(new bridge::script::ScriptSideInMultiProcess);
   set_core_side(new CoreSideInScript);
@@ -948,7 +989,7 @@ ScriptBridgeInMultiProcess::ScriptBridgeInMultiProcess() {
         connection_ = std::move(connection);
         handler_ = std::move(handler);
         server_handler_ = std::move(server_handler);
-        LOGE("ScriptBridgeInMultiProcess finish %x %x", server_handler_.get(),
+        LOGE("ScriptBridgeInMultiProcess finish %p %p", server_handler_.get(),
              server_handler.get());
         return true;
       },
@@ -967,10 +1008,8 @@ ScriptBridgeInMultiProcess::~ScriptBridgeInMultiProcess() {
 }
 
 void ScriptBridgeInMultiProcess::RegisterIPCCallback(IPCHandler *handler) {
-  LOGE("RegisterIPCCallback is running");
   handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::SETJSFVERSION),
                            HandleSetJSVersion);
-  LOGE("RegisterIPCCallback is running2");
   handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::REPORTEXCEPTION),
                            HandleReportException);
   handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::CALLNATIVE),
@@ -1020,8 +1059,12 @@ void ScriptBridgeInMultiProcess::RegisterIPCCallback(IPCHandler *handler) {
                            HandlePostMessage);
   handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::DISPATCHMESSAGE),
                            HandleDispatchMessage);
+  handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::DISPATCHMESSAGESYNC),
+                           HandleDispatchMessageSync);
   handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::ONRECEIVEDRESULT),
                            OnReceivedResult);
+  handler->registerHandler(static_cast<uint32_t>(IPCProxyMsg::UPDATECOMPONENTDATA),
+                           UpdateComponentData);
 }
 
 }  // namespace WeexCore
