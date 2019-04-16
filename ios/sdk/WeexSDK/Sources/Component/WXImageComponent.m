@@ -350,6 +350,27 @@ WX_EXPORT_METHOD(@selector(save:))
     [self updateImage];
 }
 
+-(UIColor*) getPlaceholderColor{
+    
+    int i = arc4random() % 6;
+    switch (i) {
+        case 0: return [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
+            
+        case 1 : return [UIColor colorWithRed:255.0/255.0 green:223.0/255.0 blue:186.0/255.0 alpha:1];
+            
+        case 2:  return [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:186.0/255.0 alpha:1];
+            
+        case 3:  return [UIColor colorWithRed:186.0/255.0 green:255.0/255.0 blue:201.0/255.0 alpha:1];
+           
+        case 4:  return  [UIColor colorWithRed:186.0/255.0 green:225.0/255.0 blue:255.0/255.0 alpha:1];
+            
+        case 5:  return [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
+            
+        default:
+            return [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
+            
+    }
+}
 - (void)updateImage
 {
     __weak typeof(self) weakSelf = self;
@@ -370,32 +391,8 @@ WX_EXPORT_METHOD(@selector(save:))
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     
                     UIImageView * imageView = (UIImageView *)strongSelf.view;
-                    int i = arc4random() % 5;
-                    switch (i) {
-                        case 0: imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
-                            break;
-                            
-                        case 1 : imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:223.0/255.0 blue:186.0/255.0 alpha:1];
-                            break;
-                        case 2:
-                            imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:186.0/255.0 alpha:1];
-                            break;
-                        case 3:
-                            imageView.backgroundColor = [UIColor colorWithRed:186.0/255.0 green:255.0/255.0 blue:201.0/255.0 alpha:1];
-                            break;
-                        case 4:
-                            imageView.backgroundColor = [UIColor colorWithRed:186.0/255.0 green:225.0/255.0 blue:255.0/255.0 alpha:1];
-                            break;
-                        case 5:
-                            imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
-                            
-                            break;
-                        default:
-                           imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
-                            
-                            break;
-                            
-                    }});
+                    imageView.backgroundColor = [self getPlaceholderColor];
+                });
                 
                 [self updateContentImageWithFailedBlock:downloadFailed];
                 
