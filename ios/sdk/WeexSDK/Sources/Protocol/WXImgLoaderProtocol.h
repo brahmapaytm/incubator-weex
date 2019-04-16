@@ -44,4 +44,7 @@
  */
 - (id<WXImageOperationProtocol>)downloadImageWithURL:(NSString *)url imageFrame:(CGRect)imageFrame userInfo:(NSDictionary *)options completed:(void(^)(UIImage *image,  NSError *error, BOOL finished))completedBlock;
 
+@optional
+- (void) checkIfTheImageExists:(NSString *)urlString completed:(void(^)(UIImage *image))completedBlock;
+
 @end

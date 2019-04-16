@@ -64,7 +64,7 @@ static dispatch_queue_t WXImageUpdateQueue;
 @property (nonatomic, strong) id<WXImageOperationProtocol> placeholderOperation;
 @property (nonatomic) BOOL imageLoadEvent;
 @property (nonatomic) BOOL imageDownloadFinish;
-
+@property (nonatomic) BOOL isPlaceholderColorRequired;
 @end
 
 @implementation WXImageComponent
@@ -101,10 +101,11 @@ WX_EXPORT_METHOD(@selector(save:))
         if (attributes[@"quality"]) {
             _imageQuality = [WXConvert WXImageQuality:attributes[@"quality"]];
         }
-        
+        _isPlaceholderColorRequired = YES; // TODO: Server driven
         _imageSharp = [WXConvert WXImageSharp:styles[@"sharpen"]];
         _imageLoadEvent = NO;
         _imageDownloadFinish = NO;
+        
     }
     
     return self;
@@ -362,7 +363,54 @@ WX_EXPORT_METHOD(@selector(save:))
         };
         
         [strongSelf updatePlaceHolderWithFailedBlock:downloadFailed];
-        [strongSelf updateContentImageWithFailedBlock:downloadFailed];
+        
+        [[self imageLoader] checkIfTheImageExists:self.imageSrc completed:^(UIImage *image) {
+            if(image == nil) {
+                
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    
+                    UIImageView * imageView = (UIImageView *)strongSelf.view;
+                    int i = arc4random() % 5;
+                    switch (i) {
+                        case 0: imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
+                            break;
+                            
+                        case 1 : imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:223.0/255.0 blue:186.0/255.0 alpha:1];
+                            break;
+                        case 2:
+                            imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:186.0/255.0 alpha:1];
+                            break;
+                        case 3:
+                            imageView.backgroundColor = [UIColor colorWithRed:186.0/255.0 green:255.0/255.0 blue:201.0/255.0 alpha:1];
+                            break;
+                        case 4:
+                            imageView.backgroundColor = [UIColor colorWithRed:186.0/255.0 green:225.0/255.0 blue:255.0/255.0 alpha:1];
+                            break;
+                        case 5:
+                            imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
+                            
+                            break;
+                        default:
+                           imageView.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
+                            
+                            break;
+                            
+                    }});
+                
+                [self updateContentImageWithFailedBlock:downloadFailed];
+                
+            } else {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    UIImageView * imageView = (UIImageView *)strongSelf.view;
+                    [self addFadingAnimationOnImageView:imageView];
+                     imageView.image = image;
+                    
+                });
+                
+            }
+            
+        }];
         
         if (!strongSelf.imageSrc && !strongSelf.placeholdSrc) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -454,6 +502,9 @@ WX_EXPORT_METHOD(@selector(save:))
             if (![imageSrc isEqualToString:strongSelf.imageSrc]) {
                 return ;
             }
+            ((UIImageView *)strongSelf.view).backgroundColor = UIColor.clearColor;
+            UIImageView * imageView = (UIImageView *)strongSelf.view;
+            [self addFadingAnimationOnImageView:imageView];
             
             if ([strongSelf isViewLoaded]) {
                 strongSelf.imageDownloadFinish = YES;
@@ -468,6 +519,15 @@ WX_EXPORT_METHOD(@selector(save:))
     }];
 }
 
+-(void) addFadingAnimationOnImageView:(UIImageView*) imageView {
+    imageView.backgroundColor = UIColor.clearColor;
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.4f;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionFade;
+    [imageView.layer addAnimation:transition forKey:nil];
+    
+}
 - (void)readyToRender
 {
     // when image download completely (success or failed)
