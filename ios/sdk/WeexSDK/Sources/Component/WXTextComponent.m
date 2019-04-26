@@ -469,6 +469,7 @@ do {\
          // set default lineBreakMode
         paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     }
+    
     _truncationLine = NO;
     if (_textOverflow && [_textOverflow length] > 0) {
         if (_lines && [_textOverflow isEqualToString:@"ellipsis"])
