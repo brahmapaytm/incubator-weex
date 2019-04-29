@@ -350,27 +350,6 @@ WX_EXPORT_METHOD(@selector(save:))
     [self updateImage];
 }
 
--(UIColor*) getPlaceholderColor{
-    
-    int i = arc4random() % 6;
-    switch (i) {
-        case 0: return [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
-            
-        case 1 : return [UIColor colorWithRed:255.0/255.0 green:223.0/255.0 blue:186.0/255.0 alpha:1];
-            
-        case 2:  return [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:186.0/255.0 alpha:1];
-            
-        case 3:  return [UIColor colorWithRed:186.0/255.0 green:255.0/255.0 blue:201.0/255.0 alpha:1];
-           
-        case 4:  return  [UIColor colorWithRed:186.0/255.0 green:225.0/255.0 blue:255.0/255.0 alpha:1];
-            
-        case 5:  return [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
-            
-        default:
-            return [UIColor colorWithRed:255.0/255.0 green:179.0/255.0 blue:186.0/255.0 alpha:1];
-            
-    }
-}
 - (void)updateImage
 {
     __weak typeof(self) weakSelf = self;
@@ -391,7 +370,7 @@ WX_EXPORT_METHOD(@selector(save:))
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     
                     UIImageView * imageView = (UIImageView *)strongSelf.view;
-                    imageView.backgroundColor = [self getPlaceholderColor];
+                    imageView.backgroundColor = [UIColor grayColor];
                 });
                 
                 [self updateContentImageWithFailedBlock:downloadFailed];
@@ -400,7 +379,6 @@ WX_EXPORT_METHOD(@selector(save:))
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     UIImageView * imageView = (UIImageView *)strongSelf.view;
-                    [self addFadingAnimationOnImageView:imageView];
                      imageView.image = image;
                     
                 });
@@ -500,9 +478,7 @@ WX_EXPORT_METHOD(@selector(save:))
                 return ;
             }
             ((UIImageView *)strongSelf.view).backgroundColor = UIColor.clearColor;
-            UIImageView * imageView = (UIImageView *)strongSelf.view;
-            [self addFadingAnimationOnImageView:imageView];
-            
+           
             if ([strongSelf isViewLoaded]) {
                 strongSelf.imageDownloadFinish = YES;
                 ((UIImageView *)strongSelf.view).image = image;
@@ -516,15 +492,6 @@ WX_EXPORT_METHOD(@selector(save:))
     }];
 }
 
--(void) addFadingAnimationOnImageView:(UIImageView*) imageView {
-    imageView.backgroundColor = UIColor.clearColor;
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.4f;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionFade;
-    [imageView.layer addAnimation:transition forKey:nil];
-    
-}
 - (void)readyToRender
 {
     // when image download completely (success or failed)
