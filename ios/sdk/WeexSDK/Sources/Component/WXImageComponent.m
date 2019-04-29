@@ -272,7 +272,6 @@ WX_EXPORT_METHOD(@selector(save:))
     [self _clipsToBounds];
     
     [self updateImage];
-    
 }
 
 - (BOOL)_needsDrawBorder
@@ -363,14 +362,13 @@ WX_EXPORT_METHOD(@selector(save:))
         };
         
         [strongSelf updatePlaceHolderWithFailedBlock:downloadFailed];
-        
         [[self imageLoader] checkIfTheImageExists:self.imageSrc completed:^(UIImage *image) {
             if(image == nil) {
                 
                 dispatch_sync(dispatch_get_main_queue(), ^{
                     
-                    UIImageView * imageView = (UIImageView *)strongSelf.view;
-                    imageView.backgroundColor = [UIColor grayColor];
+                    UIImageView * imageView = (UIImageView *)self.view;
+                    imageView.backgroundColor = [UIColor colorWithRed:220.0/255 green:220.0/255 blue:220.0/255 alpha:1];;
                 });
                 
                 [self updateContentImageWithFailedBlock:downloadFailed];
@@ -378,14 +376,14 @@ WX_EXPORT_METHOD(@selector(save:))
             } else {
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    UIImageView * imageView = (UIImageView *)strongSelf.view;
-                     imageView.image = image;
+                    UIImageView * imageView = (UIImageView *)self.view;
+                    imageView.image = image;
                     
                 });
                 
             }
-            
         }];
+        
         
         if (!strongSelf.imageSrc && !strongSelf.placeholdSrc) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -477,8 +475,7 @@ WX_EXPORT_METHOD(@selector(save:))
             if (![imageSrc isEqualToString:strongSelf.imageSrc]) {
                 return ;
             }
-            ((UIImageView *)strongSelf.view).backgroundColor = UIColor.clearColor;
-           
+           ((UIImageView *)strongSelf.view).backgroundColor = UIColor.clearColor;
             if ([strongSelf isViewLoaded]) {
                 strongSelf.imageDownloadFinish = YES;
                 ((UIImageView *)strongSelf.view).image = image;
